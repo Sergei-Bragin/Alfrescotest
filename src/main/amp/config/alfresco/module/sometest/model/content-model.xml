@@ -59,9 +59,9 @@
                 </property>
             </properties>
             <associations>
-                <child-association name="cm:contains">
+                <child-association name="cows:icon">
                     <target>
-                        <class>sys:base</class>
+                        <class>cm:content</class>
                     </target>
                 </child-association>
             </associations>
@@ -78,9 +78,7 @@
                     <title>Storage type [milk , food, money]</title>
                     <type>d:text</type>
                     <constraints>
-                        <constraint ref="cows:storageSelect:milk"/>
-                        <constraint ref="cows:storageSelect:food"/>
-                        <constraint ref="cows:storageSelect:money"/>
+                        <constraint ref="cows:storageSelect"/>
                     </constraints>
                 </property>
                 <property name="cows:capacity">
