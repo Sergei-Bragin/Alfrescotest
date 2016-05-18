@@ -1,0 +1,101 @@
+<project name="efeasibility" basedir="">
+
+    <property file="build.${user.name}.properties"/>
+
+    <path id="yuicompressor.classpath">
+        <fileset dir="${project.dir}/lib">
+            <include name="ml-ant-http-1.1.1.jar"/>
+            <include name="com.jcraft.jsch_0.1.41.v201101211617.jar"/>
+            <include name="commons-net-3.4.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef name="http" classname="org.missinglink.ant.task.http.HttpClientTask">
+        <classpath>
+            <path refid="yuicompressor.classpath"/>
+        </classpath>
+    </taskdef>
+
+    <!--################################## Local ######################################################-->
+
+    <target name="local-reload-webscripts-repo" description="Reload repository webscripts">
+
+        <delete dir="${alfresco.scripts.dir}/templates/webscripts/com"/>
+
+        <copy todir="${alfresco.scripts.dir}/templates/webscripts/com" filtering="true">
+            <fileset dir="${project.dir}/src/main/amp/config/alfresco/templates/webscripts/com">
+                <!--<include name="/**/*.*"/>-->
+            </fileset>
+        </copy>
+
+        <reload-web-scripts alfresco.username="${local.alfresco.username}"
+                            alfresco.userpassword="${local.alfresco.password}"
+                            reload.web-scripts.url="${local.alfresco.web-script.reload.url}"/>
+    </target>
+
+
+    <target name="pre-install-amps">
+
+
+        <build-amp mvn.file.path="${project.dir}/pom.xml"/>
+        <!--<build-amp mvn.file.path="${project.dir}/share/pom.xml" />-->
+
+
+        <!--copy amps-->
+
+        <copy file="${project.dir}/target/${amp.file}"
+              todir="${alfresco.dir}/amps" overwrite="true"/>
+        <!--<copy file="${project.dir}/share/target/${amp.share.file}"-->
+        <!--todir="${alfresco.dir}/amps_share" overwrite="true"/>-->
+
+        <!--end copy amps-->
+
+        <copy file="${local.back-up.dir}/alfresco.war"
+              todir="${alfresco.dir}/tomcat/webapps" overwrite="true"/>
+
+        <!--<copy file="${local.back-up.dir}/share.war"-->
+        <!--todir="${alfresco.dir}/tomcat/webapps" overwrite="true"/>-->
+
+        <exec command="${alfresco.dir}/bin/apply_amps.sh"/>
+
+    </target>
+
+    <target name="local-apply-amp" depends="pre-install-amps">
+
+    </target>
+
+    <!--################################## Macros ######################################################-->
+
+    <macrodef name="reload-web-scripts">
+        <attribute name="reload.web-scripts.url"/>
+        <attribute name="alfresco.username"/>
+        <attribute name="alfresco.userpassword"/>
+        <sequential>
+
+            <http url="@{reload.web-scripts.url}"
+                  method="POST"
+                  printrequest="false"
+                  printrequestheaders="false"
+                  printresponse="false"
+                  printresponseheaders="false"
+                  expected="200"
+                  failonunexpected="true">
+                <credentials username="@{alfresco.username}" password="@{alfresco.userpassword}"/>
+                <query>
+                    <parameter name="reset" value="on"/>
+                </query>
+            </http>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef name="build-amp">
+        <attribute name="mvn.file.path"/>
+        <sequential>
+
+            <exec command="mvn -f @{mvn.file.path} clean package"/>
+
+        </sequential>
+    </macrodef>
+
+</project>

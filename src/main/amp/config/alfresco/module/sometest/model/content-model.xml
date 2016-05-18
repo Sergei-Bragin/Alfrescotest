@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.alfresco.org/model/dictionary/1.0" name="cows:model">
+
+    <description>Cows model</description>
+    <author>Sergio Bragin</author>
+    <version>1.0</version>
+
+    <imports>
+        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+    </imports>
+
+    <namespaces>
+        <namespace uri="cows.model" prefix="cows"/>
+    </namespaces>
+
+    <constraints>
+        <constraint name="cows:storageSelect" type="LIST">
+            <parameter name="allowedValues">
+                <list>
+                    <value>milk</value>
+                    <value>food</value>
+                    <value>money</value>
+                </list>
+            </parameter>
+        </constraint>
+    </constraints>
+
+    <types>
+        <!--Type Cow-->
+        <type name="cows:cow">
+            <title>Cow Template</title>
+            <parent>cm:content</parent>
+            <archive>true</archive>
+            <properties>
+                <property name="cows:cowName">
+                    <title>Name cow</title>
+                    <type>d:text</type>
+                </property>
+                <property name="cows:hungryLvl">
+                    <title>Hungry lvl</title>
+                    <type>d:int</type>
+                </property>
+                <property name="cows:maxHungryLvl">
+                    <title>Max hungry lvl</title>
+                    <type>d:int</type>
+                </property>
+                <property name="cows:milkLvl">
+                    <title>Milk lvl</title>
+                    <type>d:int</type>
+                </property>
+                <property name="cows:maxMilkLvl">
+                    <title>Max milk lvl</title>
+                    <type>d:int</type>
+                </property>
+                <property name="cows:birthDate">
+                    <title>Cow birth date</title>
+                    <type>d:date</type>
+                </property>
+            </properties>
+            <associations>
+                <child-association name="cm:contains">
+                    <target>
+                        <class>sys:base</class>
+                    </target>
+                </child-association>
+            </associations>
+        </type>
+
+
+        <!--Type Storage-->
+        <type name="cows:storage">
+            <title>Cows storage</title>
+            <parent>cm:content</parent>
+            <archive>true</archive>
+            <properties>
+                <property name="cows:storageType">
+                    <title>Storage type [milk , food, money]</title>
+                    <type>d:text</type>
+                    <constraints>
+                        <constraint ref="cows:storageSelect:milk"/>
+                        <constraint ref="cows:storageSelect:food"/>
+                        <constraint ref="cows:storageSelect:money"/>
+                    </constraints>
+                </property>
+                <property name="cows:capacity">
+                    <title>Storage capacity</title>
+                    <type>d:int</type>
+                </property>
+            </properties>
+        </type>
+    </types>
+
+
+
+    <!--My Aspects-->
+    <aspects>
+        <aspect name="cows:dead">
+            <title>Cow status</title>
+        </aspect>
+    </aspects>
+</model>
